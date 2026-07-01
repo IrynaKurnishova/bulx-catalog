@@ -25,7 +25,7 @@ export function useProducts() {
 
   async function fetchProducts() {
     try {
-      const res = await fetch('https://media.downshift.app/hiring/founding-engineer/items.json')
+      const res = await fetch('/api/hiring/founding-engineer/items.json')
       const data = await res.json()
       products.value = data
     } catch (e) {
