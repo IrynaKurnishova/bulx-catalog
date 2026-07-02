@@ -1,48 +1,39 @@
-# bulx-catalog
+# BULX Product Discovery
 
-This template should help get you started developing with Vue 3 in Vite.
+Live: https://bulx-catalog.vercel.app  
+GitHub: https://github.com/IrynaKurnishova/bulx-catalog
 
-## Recommended IDE Setup
+## What I built
 
-[VS Code](https://code.visualstudio.com/) + [Vue (Official)](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+A product discovery page for 4,000 home goods items. The focus was on making search feel fast and useful, not just functional.
 
-## Recommended Browser Setup
+## Key decisions
 
-- Chromium-based browsers (Chrome, Edge, Brave, etc.):
-  - [Vue.js devtools](https://chromewebstore.google.com/detail/vuejs-devtools/nhdogjmejiglipccpnnnanhbledajbpd)
-  - [Turn on Custom Object Formatter in Chrome DevTools](http://bit.ly/object-formatters)
-- Firefox:
-  - [Vue.js devtools](https://addons.mozilla.org/en-US/firefox/addon/vue-js-devtools/)
-  - [Turn on Custom Object Formatter in Firefox DevTools](https://fxdx.dev/firefox-devtools-custom-object-formatters/)
+**Search across title, brand, and tags** — not just title. A user searching "rattan" should find products where rattan appears in tags even if the word isn't in the title. This matches how people actually think about materials.
 
-## Type Support for `.vue` Imports in TS
+**Debounced input (300ms)** — avoids filtering on every keystroke. Feels snappier and doesn't thrash the computed property on slow input.
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
+**Dirty data handling** — the dataset has real-world messiness: prices as strings with commas ("1,081.43"), null prices, titles with leading/trailing whitespace ("  VINTAGE OAK BIN "), null ratings, null images. I normalized all of this before rendering rather than letting it surface as broken UI.
 
-## Customize configuration
+**Skeleton loading state** — instead of a spinner, the grid shows placeholder cards while data loads. Reduces layout shift and feels more polished.
 
-See [Vite Configuration Reference](https://vite.dev/config/).
+**Graceful fallbacks** — products with no image get a clean placeholder icon. Products with null price show "Price on request". Products with no reviews show "No reviews yet". Nothing breaks silently.
 
-## Project Setup
+**CORS via Vercel rewrites** — the external JSON has no CORS headers. Rather than bundling the file locally (which would go stale), I added a Vercel rewrite rule to proxy the request server-side. This is the correct production approach.
 
-```sh
-npm install
-```
+## Tech stack
 
-### Compile and Hot-Reload for Development
+- Vue 3 + TypeScript + Vite
+- TailwindCSS
+- Deployed on Vercel
 
-```sh
-npm run dev
-```
+## What I'd do next
 
-### Type-Check, Compile and Minify for Production
+- Virtual scrolling for performance with 4,000 items (currently renders all filtered results)
+- Price range slider filter
+- Highlight matched text in search results
+- "In stock only" toggle
 
-```sh
-npm run build
-```
+## The tradeoff I'd watch
 
-### Lint with [ESLint](https://eslint.org/)
-
-```sh
-npm run lint
-```
+Rendering all 4,000 cards at once is fine for this demo but would hurt on mobile with a slow connection. The first fix would be windowing — only rendering cards in the viewport.
